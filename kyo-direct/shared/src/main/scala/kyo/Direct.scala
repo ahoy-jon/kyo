@@ -1,5 +1,6 @@
 package kyo
 
+import cps.AsyncShift
 import cps.CpsMonad
 import cps.CpsMonadContext
 import cps.async
@@ -188,6 +189,7 @@ private def impl[A: Type](body: Expr[A])(using quotes: Quotes): Expr[Any] =
 
             '{
                 given KyoCpsMonad[s] = KyoCpsMonad[s]
+                import directInternal.shiftedMaybe
                 async {
                     ${ transformedBody.asExprOf[A] }
                 }.asInstanceOf[A < s]
@@ -214,4 +216,10 @@ object directInternal:
 
         override def flatMap[A, B](fa: A < S)(f: A => B < S): B < S = fa.flatMap(f)
     end KyoCpsMonad
+
+    object MaybeAsyncShift extends AsyncShift[Maybe.type]:
+        def map[F[_], A, B](obj: Maybe.type, monad: CpsMonad[F])(c: Maybe[A])(f: A => F[B]): F[Maybe[B]] =
+            c.fold(monad.pure(Maybe.empty))(a => monad.map(f(a))(b => Maybe(b)))
+
+    transparent inline given shiftedMaybe: MaybeAsyncShift.type = MaybeAsyncShift
 end directInternal
