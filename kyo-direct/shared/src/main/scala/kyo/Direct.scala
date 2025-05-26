@@ -189,7 +189,7 @@ private def impl[A: Type](body: Expr[A])(using quotes: Quotes): Expr[Any] =
 
             '{
                 given KyoCpsMonad[s] = KyoCpsMonad[s]
-                import directInternal.shiftedMaybe
+                import directInternal.given
                 async {
                     ${ transformedBody.asExprOf[A] }
                 }.asInstanceOf[A < s]
@@ -222,4 +222,8 @@ object directInternal:
             c.fold(monad.pure(Maybe.empty))(a => monad.map(f(a))(b => Maybe(b)))
 
     transparent inline given shiftedMaybe: MaybeAsyncShift.type = MaybeAsyncShift
+    object ResultAsyncShift extends AsyncShift[Result.type]:
+        def map[F[_], E, A](obj: Result.type, monad: CpsMonad[F])(self: Result[E, A])[B]: F[Any] = ???
+
+    transparent inline given shiftedResult: ResultAsyncShift.type = ResultAsyncShift
 end directInternal

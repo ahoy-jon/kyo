@@ -297,7 +297,7 @@ class ShiftMethodSupportTest extends AnyFreeSpec with Assertions:
             assert(d.eval == 2)
         }
     }
-/*
+    /*
     "Maybe" - {
         val x: Maybe[Int < Any] = Maybe(1)
 
@@ -306,6 +306,19 @@ class ShiftMethodSupportTest extends AnyFreeSpec with Assertions:
                 x.map(_.now)
 
             assert(d.eval == Maybe(1))
+        }
+    }*/
+
+    /*
+    "Result" - {
+        val x: Result[String, Int] = Result.succeed(1)
+        def f(i: Int): Int < Any   = i + 1
+
+        "map" in {
+            val d = defer:
+                x.map(i => f(i).now)
+
+            assert(d.eval == Result.succeed(2))
         }
     }*/
 end ShiftMethodSupportTest

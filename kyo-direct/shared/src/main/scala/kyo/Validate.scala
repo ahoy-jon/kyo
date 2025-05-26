@@ -57,7 +57,7 @@ private[kyo] object Validate:
             }
         end pure
 
-        val forceDebug: Boolean = expr.asTerm.toString.contains("Maybe")
+        val forceDebug: Boolean = expr.asTerm.toString.contains("Result")
 
         if forceDebug then
             println("-" * 20)
@@ -95,10 +95,10 @@ private[kyo] object Validate:
                 case _ => qualifiers.foreach(qual => Trees.Step.goto(qual))
 
         Trees.traverseGoto(expr.asTerm) {
-            case Apply(TypeApply(Apply(TypeApply(Select(Ident("Maybe"), methodName), _), List(maybe)), _), argGroup0) if
+            case Apply(TypeApply(Apply(TypeApply(Select(Ident("Maybe" | "Result"), methodName), _), List(self)), _), argGroup1) if
                     validMethodNamesForAsyncShift.contains(methodName) =>
-                Trees.Step.goto(maybe)
-                asyncShiftDive(argGroup0)
+                Trees.Step.goto(self)
+                asyncShiftDive(argGroup1)
 
             case Apply(Apply(TypeApply(select: Select, _), argGroup0), argGroup1) if validAsyncShift(select) =>
                 Trees.Step.goto(select.qualifier)
