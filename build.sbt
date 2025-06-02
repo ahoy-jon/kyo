@@ -280,7 +280,8 @@ lazy val `kyo-data` =
         .settings(
             `kyo-settings`,
             libraryDependencies += "com.lihaoyi" %%% "pprint"        % "0.9.0",
-            libraryDependencies += "dev.zio"     %%% "izumi-reflect" % "3.0.2" % Test
+            libraryDependencies += "dev.zio"     %%% "izumi-reflect" % "3.0.2" % Test,
+            addCps
         )
         .jvmSettings(mimaCheck(false))
         .nativeSettings(`native-settings`)
@@ -349,6 +350,9 @@ lazy val `kyo-offheap` =
             Compile / doc / sources := Seq.empty
         )
 
+def  addCps =            libraryDependencies += "io.github.dotty-cps-async" %%% "dotty-cps-async" % "1.0.3-SNAPSHOT"
+
+
 lazy val `kyo-direct` =
     crossProject(JSPlatform, JVMPlatform, NativePlatform)
         .withoutSuffixFor(JVMPlatform)
@@ -357,7 +361,7 @@ lazy val `kyo-direct` =
         .dependsOn(`kyo-core`)
         .settings(
             `kyo-settings`,
-            libraryDependencies += "io.github.dotty-cps-async" %%% "dotty-cps-async" % "1.0.2"
+            addCps
         )
         .jvmSettings(mimaCheck(false))
         .nativeSettings(`native-settings`)

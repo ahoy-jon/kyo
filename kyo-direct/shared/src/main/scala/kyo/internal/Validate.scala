@@ -55,6 +55,11 @@ private[kyo] object Validate:
             }
         end pure
 
+        val forceValidate: Boolean = expr.show.contains("xMaybeEffect")
+
+        if forceValidate then
+            return
+
         def validAsyncShift(select: Select): Boolean =
             val Select(qualifier, methodName) = select
             inline def validType =

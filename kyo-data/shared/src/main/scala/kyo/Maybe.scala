@@ -2,6 +2,8 @@ package kyo
 
 import Maybe.*
 import Maybe.internal.*
+import cps.CpsAsyncMonad
+import cps.CpsMonad
 import scala.language.implicitConversions
 
 /** Represents an optional value that can be either Present or Absent.
@@ -218,6 +220,10 @@ object Maybe:
           */
         inline def map[B](inline f: A => B): Maybe[B] =
             if isEmpty then Absent else f(get)
+
+        def map_async[F[_], B](m: CpsMonad[F])(f: A => F[B]): F[Maybe[B]] = self match
+            case _: Absent => m.pure(Absent)
+            case a: A      => m.map(f(a))(b => b.asInstanceOf[Maybe[B]])
 
         /** Applies a function that returns a Maybe to the contained value if defined.
           *

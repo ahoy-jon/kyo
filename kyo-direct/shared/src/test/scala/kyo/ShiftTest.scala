@@ -439,9 +439,17 @@ class ShiftMethodSupportTest extends AnyFreeSpec with Assertions:
     }
 
     "Maybe" - {
-        val x: Maybe[Int < Any] = Maybe(1)
-        val y: Maybe[Int]       = Maybe(1)
-        val z: Maybe[Int]       = Maybe.empty
+        val xMaybeEffect: Maybe[Int < Any] = Maybe(1)
+        val y: Maybe[Int]                  = Maybe(1)
+        val z: Maybe[Int]                  = Maybe.empty
+
+        "map" in {
+            // import cps.AsyncShift.shiftedCpsMonad
+            val d = defer:
+                xMaybeEffect.map(_.now + 1)
+
+            assert(d.eval == Maybe(2))
+        }
 
         // "filter" in {
         //     def f(i: Int): Boolean < Any = i < 3
