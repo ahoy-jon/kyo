@@ -516,23 +516,13 @@ class ShiftMethodSupportTest extends AnyFreeSpec with Assertions:
             assert(d.eval == Maybe(2))
         }
 
-        /*
         "fold" in {
+            def fffff(i: Int): Int < Any = i
             val d = direct:
-                yMaybe.fold(0)(i => i.now + 1)
+                yMaybe.fold(0)(i => fffff(i).now)
 
-            assert(d.eval == 2)
-        }*/
-
-        // getOrElse //class Int in package scala does not take type parameters
-        /*"getOrElse" in {
-            def default: Int < Any = 2
-            // val strDefault: String < Any = "abc"
-            val d = direct:
-                yMaybe.getOrElse(default.now)
-
-            assert(d.eval.toString == "2")
-        }*/
+            assert(d.eval == 1)
+        }
 
     }
 end ShiftMethodSupportTest

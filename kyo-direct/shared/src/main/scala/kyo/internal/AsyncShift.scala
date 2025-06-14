@@ -73,11 +73,13 @@ class MaybeAsyncShift(using Frame) extends AsyncShift[Maybe.type]:
                     case Maybe.Absent =>
                         monad.pure(Maybe.Absent)
 
-    def fold[F[_], A, B](maybe: Maybe.type, monad: CpsMonad[F])(ma: Maybe[A])(ifEmpty: => F[B])(f: A => F[B]): F[B] =
+    def fold[F[_], A](maybe: Maybe.type, monad: CpsMonad[F])(ma: Maybe[A])[B](ifEmpty: => F[B] | B)(f: A => F[B]): F[B] =
         monad match
             case _: KyoCpsMonad[?] => ma match
                     case Maybe.Present(a) => f(a)
-                    case Maybe.Absent     => ifEmpty
+                    case Maybe.Absent     => ifEmpty.asInstanceOf[F[B]]
+
+
 end MaybeAsyncShift
 
 class ChunkAsyncShift[A](using Frame) extends KyoSeqAsyncShift[A, Chunk, Chunk[A]]
