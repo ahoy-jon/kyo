@@ -450,5 +450,89 @@ class ShiftMethodSupportTest extends AnyFreeSpec with Assertions:
             assert(d.eval == Maybe(2))
         }
 
+        "flatMap" in {
+            val d = direct:
+                xMaybeEffect.flatMap(i => Maybe(i.now + 1))
+
+            assert(d.eval == Maybe(2))
+        }
+
+        "orElse" in {
+            val d = direct:
+                zMaybe.orElse(yMaybe)
+
+            assert(d.eval == Maybe(1))
+        }
+
+        "filter" in {
+            def f(i: Int): Boolean < Any = i < 3
+            val d = direct:
+                yMaybe.filter(i => f(i).now)
+
+            assert(d.eval == Maybe(1))
+        }
+
+        "filterNot" in {
+            def f(i: Int): Boolean < Any = i < 3
+            val d = direct:
+                yMaybe.filterNot(i => f(i).now)
+
+            assert(d.eval == Maybe.empty)
+        }
+
+        "exists" in {
+            def f(i: Int): Boolean < Any = i < 3
+            val d = direct:
+                yMaybe.exists(i => f(i).now)
+
+            assert(d.eval)
+        }
+
+        "forall" in {
+            def f(i: Int): Boolean < Any = i < 3
+            val d = direct:
+                yMaybe.forall(i => f(i).now)
+
+            assert(d.eval)
+        }
+
+        "foreach" in {
+
+            def plus(i: Int) = Var.update[Int](_ + i)
+
+            val d = direct:
+                yMaybe.foreach(i => plus(i).unit.now)
+
+            assert(Var.run(0)(d.andThen(Var.get[Int])).eval == 1)
+        }
+
+        "collect" in {
+            def f(i: Int): Int < Any = i + 1
+
+            val d = direct:
+                yMaybe.collect:
+                    case i if i < 3 => f(i).now
+
+            assert(d.eval == Maybe(2))
+        }
+
+        /*
+        "fold" in {
+            val d = direct:
+                yMaybe.fold(0)(i => i.now + 1)
+
+            assert(d.eval == 2)
+        }*/
+
+        // getOrElse //class Int in package scala does not take type parameters
+        /*"getOrElse" in {
+            def default: Int < Any = 2
+            // val strDefault: String < Any = "abc"
+            val d = direct:
+                yMaybe.getOrElse(default.now)
+
+            assert(d.eval.toString == "2")
+        }*/
+
     }
 end ShiftMethodSupportTest
