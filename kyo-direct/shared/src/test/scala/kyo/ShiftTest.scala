@@ -444,7 +444,7 @@ class ShiftMethodSupportTest extends AnyFreeSpec with Assertions:
         val zMaybe: Maybe[Int]             = Maybe.empty
 
         "map" in {
-            val d = defer:
+            val d = direct:
                 xMaybeEffect.map(_.now + 1)
 
             assert(d.eval == Maybe(2))
