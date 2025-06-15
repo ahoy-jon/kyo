@@ -72,12 +72,14 @@ private[kyo] object Validate:
 
         def asyncShiftDive(qualifiers: List[Tree])(using Trees.Step): Unit =
             qualifiers match
-                case List(Block(List(DefDef(_, _, _, Some(body))), _)) =>
+                case Block(List(DefDef(_, _, _, Some(body))), _) :: xs =>
                     body match
                         case Match(_, cases) =>
                             cases.foreach:
                                 case CaseDef(_, _, body) => Trees.Step.goto(body)
                         case _ => Trees.Step.goto(body)
+                    end match
+                    asyncShiftDive(xs)
 
                 case _ => qualifiers.foreach(qual => Trees.Step.goto(qual))
 

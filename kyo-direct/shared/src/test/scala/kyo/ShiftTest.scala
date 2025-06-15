@@ -525,4 +525,100 @@ class ShiftMethodSupportTest extends AnyFreeSpec with Assertions:
         }
 
     }
+
+    "Result" - {
+
+        val xResultEffect: Result[Throwable, Int < Any] = Result.succeed(1)
+        val yResult: Result[Nothing, Int]               = Result.succeed(1)
+        val zResult: Result[String, Nothing]            = Result.fail("fail")
+
+        "map" in {
+            // Applies a function to the successful value.
+            val d = direct:
+                xResultEffect.map(_.now + 1)
+
+            assert(d.eval == Result(2))
+        }
+
+        "flatMap" in {
+            // Chains another Result-producing computation.
+            val d = direct:
+                xResultEffect.flatMap(i => Result.succeed(i.now + 1))
+
+            assert(d.eval == Result(2))
+        }
+
+        /*
+        "orElse" in {
+            // Returns the fallback if original fails.
+            def e: Result[Nothing, Int] < Any = Result.succeed(1)
+
+            val d = direct:
+                zResult.orElse(e.now)
+
+            assert(d.eval == Result(1))
+        }*/
+
+        "filter" in {
+            // Keeps result only if predicate is true.
+            def f(i: Int): Boolean < Any = i < 3
+            val d = direct:
+                yResult.filter(i => f(i).now)
+
+            assert(d.eval == Result(1))
+        }
+
+        "exists" in {
+            // Returns true if predicate holds for success.
+            def f(i: Int): Boolean < Any = i < 3
+            val d = direct:
+                yResult.exists(i => f(i).now)
+
+            assert(d.eval)
+        }
+
+        "forall" in {
+            // Returns true if failure or predicate holds.
+            def f(i: Int): Boolean < Any = i < 3
+            val d = direct:
+                yResult.forall(i => f(i).now)
+
+            assert(d.eval)
+        }
+
+        /*
+        //TODO
+        "foreach" in {
+            // Executes side-effect if Result is success.
+            def plus(i: Int) = Var.update[Int](_ + i)
+
+            val d = direct:
+                yResult.foreach(i => plus(i).unit.now)
+
+            assert(Var.run(0)(d.andThen(Var.get[Int])).eval == 1)
+        }*/
+
+        /*
+        "collect" in {
+            // Applies partial function if defined.
+            def f(i: Int): Int < Any = i + 1
+
+            val d = direct:
+                yResult.collect:
+                    case i if i < 3 => f(i).now
+
+            assert(d.eval == Result(2))
+        }*/
+
+        "fold" in {
+            // Applies fallback or transformation.
+            def fffffzz(i: Int): Int < Any = i
+            val d = direct:
+                yResult.fold(i => fffffzz(i).now, x => 0, _ => -1)
+
+            assert(d.eval == 1)
+        }
+
+    }
+
 end ShiftMethodSupportTest
