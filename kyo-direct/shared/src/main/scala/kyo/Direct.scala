@@ -39,6 +39,8 @@ extension [A, S](inline self: A < S)
       *   if used outside a `direct` block
       */
     inline def now: A = ${ nowImpl('self) }
+    
+    inline def ! : A = ${ nowImpl('self) }
 
     /** Preserves an effect without immediate sequencing (advanced API).
       *
